@@ -30,6 +30,29 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_RIGHT] and self.rect.right < 800:
             self.rect.x += 8
 
+
+class PlayerEx:
+    def __init__(self, player):
+        self.player = player
+        self.particles = []
+    def update(self):
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LSHIFT]:
+            if keys[pg.K_LEFT] and self.player.rect.left > 0:
+                self.player.rect.x -= 4
+            if keys[pg.K_RIGHT] and self.player.rect.right < 800:
+                self.player.rect.x += 4
+            self.particles.append([self.player.rect.centerx, self.player.rect.bottom, 10])
+        for p in self.particles[:]:
+            p[1] -= 2
+            p[2] -= 0.5
+            if p[2] <= 0:
+                self.particles.remove(p)
+    def draw(self, screen):
+        for p in self.particles:
+            pg.draw.circle(screen, (100, 200, 255), (int(p[0]), int(p[1])), int(p[2]))
+
+
 class Apple(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -55,6 +78,7 @@ def main():
 
     player = Player()
     all_sprites.add(player)
+    player_ex = PlayerEx(player)
 
     score = 0
     start_ticks = pg.time.get_ticks()
@@ -79,6 +103,7 @@ def main():
         # 2. 更新処理
         if seconds_left > 0:
             all_sprites.update()
+            player_ex.update()
             
             # アイテムのランダム生成
             if random.randint(1, 30) == 1:
@@ -97,6 +122,7 @@ def main():
         # 3. 描画処理
         screen.fill((240, 255, 240))
         all_sprites.draw(screen)
+        player_ex.draw(screen)
 
         # UI描画
         score_text = font.render(f"Score: {score}", True, (0, 0, 0))
