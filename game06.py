@@ -31,24 +31,30 @@ class Player(pg.sprite.Sprite):
             self.rect.x += 8
 
 class PlayerEx:
-    def __init__(self, player):
+    """
+    プレイヤーの追加機能を管理するクラス。
+
+    Shiftキーを押しながら左右キーを押すことでプレイヤーを移動させ、
+    移動中にパーティクル（青い円）を発生させる。
+    """
+    def __init__(self, player: Player) -> None:
         self.player = player
-        self.particles = []
-    def update(self):
+        self.particles = [] # パーティクルの位置と大きさを保存するリスト
+    def update(self) -> None: 
         keys = pg.key.get_pressed()
         if keys[pg.K_LSHIFT]:
-            if keys[pg.K_LEFT] and self.player.rect.left > 0:
+            if keys[pg.K_LEFT] and self.player.rect.left > 0:  # 左キーが押され、画面の左端に到達していない場合は左に移動
                 self.player.rect.x -= 4
-            if keys[pg.K_RIGHT] and self.player.rect.right < 800:
+            if keys[pg.K_RIGHT] and self.player.rect.right < 800: # 右キーが押され、画面の右端に到達していない場合は右に移動
                 self.player.rect.x += 4
             self.particles.append([self.player.rect.centerx, self.player.rect.bottom, 10])
-        for p in self.particles[:]:
+        for p in self.particles[:]:  # 発生したパーティクルを1つずつ更新する
             p[1] -= 2
             p[2] -= 0.5
             if p[2] <= 0:
                 self.particles.remove(p)
     def draw(self, screen):
-        for p in self.particles:
+        for p in self.particles: # パーティクルを青色の円として描画する
             pg.draw.circle(screen, (100, 200, 255), (int(p[0]), int(p[1])), int(p[2]))
 
 
