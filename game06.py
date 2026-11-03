@@ -30,7 +30,6 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_RIGHT] and self.rect.right < 800:
             self.rect.x += 8
 
-
 class PlayerEx:
     def __init__(self, player):
         self.player = player
